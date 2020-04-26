@@ -1,3 +1,5 @@
+# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 set(BOX2D_SOURCE_FILES
 	collision/b2_broad_phase.cpp
 	collision/b2_chain_shape.cpp
@@ -96,13 +98,26 @@ set(BOX2D_HEADER_FILES
 	../include/box2d/box2d.h)
 
 add_library(box2d OBJECT ${BOX2D_SOURCE_FILES} ${BOX2D_HEADER_FILES})
+
+if (MSVC)
+set_property(TARGET box2d PROPERTY
+  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+		set_target_properties(box2d PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+
+endif()
+
 target_include_directories(box2d PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 target_include_directories(box2d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(box2d PROPERTIES
 	CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
+
 )
+
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "src" FILES ${BOX2D_SOURCE_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/../include" PREFIX "include" FILES ${BOX2D_HEADER_FILES})
+set_target_properties(box2d PROPERTIES FOLDER "Dependencies/Box2D")
+
+  		
